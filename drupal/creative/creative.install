@@ -1,0 +1,59 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for an installation profile.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function creative_install() {
+  $themes = array(
+    'theme_default' => 'parallel',
+    'admin_theme' => 'shiny',
+  );
+
+  theme_enable($themes);
+  theme_disable(array('bartik', 'seven'));
+
+  // Create a default role for site administrators, with all available
+  // permissions assigned.
+  $admin_role = new \stdClass();
+  $admin_role->name = 'administrator';
+  $admin_role->weight = 2;
+
+  user_role_save($admin_role);
+  user_role_grant_permissions($admin_role->rid, array_keys(module_invoke_all('permission')));
+
+  // Assign user with ID1 the "administrator" role.
+  db_insert('users_roles')
+    ->fields(array(
+      'uid' => 1,
+      'rid' => $admin_role->rid,
+    ))
+    ->execute();
+
+  // Set an installation variables.
+  foreach ($themes + array(
+    // Enable admin theme for editing nodes.
+    'node_admin_theme' => TRUE,
+    // Set this as the administrator role.
+    'user_admin_role' => $admin_role->rid,
+  ) as $type => $name) {
+    variable_set($type, $name);
+  }
+
+  $info = drupal_parse_info_file(sprintf('%s/%s.make', dirname(DRUPAL_ROOT), pathinfo(__FILE__, PATHINFO_FILENAME)));
+
+  if (!empty($info['translations'])) {
+    $batch = array();
+
+    foreach ($info['translations'] as $language) {
+      $batch = array_merge($batch, locale_batch_by_language($language));
+    }
+
+    // No need to call the "batch_process()" function because, on
+    // installation phase, it will be executed automatically.
+    batch_set($batch);
+  }
+}

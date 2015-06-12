@@ -1,0 +1,48 @@
+name = Creative
+description = A Drupal profile for the test site 'Creative'
+core = 7.x
+
+; Core modules
+dependencies[] = block
+dependencies[] = dblog
+dependencies[] = field_ui
+dependencies[] = file
+dependencies[] = image
+dependencies[] = menu
+dependencies[] = node
+dependencies[] = path
+dependencies[] = search
+dependencies[] = system
+dependencies[] = taxonomy
+dependencies[] = translation
+dependencies[] = update
+dependencies[] = user
+dependencies[] = list
+
+; Contrib modules
+dependencies[] = ctools
+dependencies[] = views_ui
+dependencies[] = libraries
+dependencies[] = admin_menu
+dependencies[] = views_bulk_operations
+dependencies[] = admin_views
+dependencies[] = ckeditor
+dependencies[] = entity
+dependencies[] = features
+dependencies[] = panels_mini
+dependencies[] = jquery_update
+dependencies[] = panels_everywhere
+dependencies[] = pathauto
+dependencies[] = strongarm
+dependencies[] = link
+dependencies[] = field_collection
+dependencies[] = entityreference
+dependencies[] = media_youtube
+dependencies[] = media_vimeo
+dependencies[] = imce
+dependencies[] = l10n_update
+
+; Features
+
+; Custom modules
+

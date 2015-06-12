@@ -1,0 +1,14 @@
+{
+  "require": {
+    "behat/drupal-propeople-context": "~1.2",
+    "drupal/drupal-builder": "dev-master"
+  },
+  "config": {
+    "bin-dir": "bin/"
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "mv bin/bdpc bin/behat"
+    ]
+  }
+}
