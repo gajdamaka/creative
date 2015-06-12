@@ -9,7 +9,7 @@
  */
 function creative_install() {
   $themes = array(
-    'theme_default' => 'parallel',
+    'theme_default' => 'creative',
     'admin_theme' => 'shiny',
   );
 

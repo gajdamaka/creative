@@ -1,0 +1,16 @@
+name = Creative Theme
+screenshot = creative.jpg
+description = General Drupal theme with predefined improvements.
+core = 7.x
+
+; CSS
+stylesheets[all][] = css/style.css
+stylesheets[print][] = css/print.css
+
+; JavaScript
+scripts[] = js/jquery.theme.js
+scripts[] = js/script.js
+
+; Regions
+regions[content] = Content
+regions[help] = Help
