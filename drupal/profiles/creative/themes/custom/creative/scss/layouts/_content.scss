@@ -1,5 +1,9 @@
 main {
   display: table-row;
   height: 100%;
+  p {
+    @include font(18px, 1.6);
+    color: #000;
+  }
 }
 
