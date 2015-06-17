@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Everywhere main layout feature.
+ */
+
+include_once 'panels_everywhere_main_layout.features.inc';

@@ -1,0 +1,9 @@
+name = Main menu
+core = 7.x
+package = Menu
+version = 7.x-1.0
+project = main_menu
+dependencies[] = features
+dependencies[] = menu
+features[features_api][] = api:2
+features[menu_custom][] = main-menu
