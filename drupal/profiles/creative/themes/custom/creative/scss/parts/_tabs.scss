@@ -1,0 +1,14 @@
+#tabs {
+  li {
+    float: left;
+    padding: 5px 20px;
+    margin-right: 10px;
+    background: $background;
+    a {
+      text-decoration: none;
+      color: #333;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+  }
+}
