@@ -1,0 +1,72 @@
+<?php
+/**
+ * @file
+ * Autoload module.
+ */
+
+autoload(__FILE__);
+
+/**
+ * Automatically load module includes from "includes/autoload" directory.
+ *
+ * @param string $module_file
+ *   Full path to a "*.module" file. Must be passed the "__FILE__" constant.
+ *
+ * @return array
+ *   An array with two keys: "name" and "path".
+ */
+function autoload($module_file) {
+  static $processed = array();
+
+  $path_info = pathinfo($module_file);
+  $data = array(
+    'name' => '',
+    'path' => '',
+  );
+
+  if ($path_info['extension'] == 'module' && empty($processed[$module_file])) {
+    $data['name'] = $path_info['filename'];
+    $data['path'] = drupal_get_path('module', $data['name']);
+
+    $cache_key = $data['name'] . ':autoload';
+    $includes_cache = cache_get($cache_key) ?: new \stdClass();
+    $includes = array();
+
+    if (empty($includes_cache->data)) {
+      $path = $data['path'] . '/includes/autoload';
+
+      if (file_exists($path)) {
+        foreach (new \FilesystemIterator($path) as $file) {
+          $includes[] = $file->getPathname();
+        }
+
+        if ($includes) {
+          cache_set($cache_key, $includes);
+        }
+      }
+    }
+    else {
+      $includes = $includes_cache->data;
+    }
+
+    foreach ($includes as $file) {
+      // Check for file existence to prevent including
+      // non-existence cached files.
+      if (file_exists($file)) {
+        require_once $file;
+      }
+    }
+
+    foreach ($data as $name => $value) {
+      $constant = strtoupper($data['name'] . '_module_' . $name);
+
+      if (!defined($constant)) {
+        define($constant, $value);
+      }
+    }
+
+    $processed[$module_file] = $data;
+  }
+
+  return empty($processed[$module_file]) ? $data : $processed[$module_file];
+}

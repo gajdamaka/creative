@@ -1,0 +1,8 @@
+name = Autoload Module Files
+project = autoload
+description = Automatically load the files from "includes/autolaod" folder of a module.
+
+required = TRUE
+hidden = TRUE
+core = 7.x
+php = 5.3

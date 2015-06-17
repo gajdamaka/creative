@@ -1,0 +1,14 @@
+<?php
+/**
+ * @file
+ * Functions module.
+ */
+
+autoload(__FILE__);
+
+/**
+ * Implements hook_admin_paths_alter().
+ */
+function functions_admin_paths_alter(array &$paths) {
+  $paths['user/*'] = TRUE;
+}
