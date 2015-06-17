@@ -1,0 +1,10 @@
+name = CTools Plugins
+package = Propeople
+
+version = 7.x
+core = 7.x
+php = 5.3
+
+project = ctools_plugins
+
+dependencies[] = ctools_api

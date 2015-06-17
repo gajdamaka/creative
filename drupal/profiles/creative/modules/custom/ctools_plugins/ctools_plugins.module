@@ -1,0 +1,12 @@
+<?php
+/**
+ * @file
+ * CTools Plugins.
+ */
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function ctools_plugins_ctools_plugin_directory($owner, $plugin_type) {
+  return $plugin_type;
+}

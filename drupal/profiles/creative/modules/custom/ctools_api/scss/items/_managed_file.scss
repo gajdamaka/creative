@@ -1,0 +1,43 @@
+.form-type-managed-file {
+  .pseudo-link {
+    display: inline-block;
+    vertical-align: top;
+    margin-bottom: $input-padding;
+  }
+  .pseudo-file {
+    float: left;
+    position: relative;
+    line-height: $elem-height - 2px;
+    height: $elem-height;
+    padding: 0 5px;
+    min-width: 250px;
+    overflow: hidden;
+    margin-right: 10px;
+    cursor: pointer;
+    border-radius: 2px;
+    white-space: nowrap;
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: $input-padding;
+      height: 100%;
+      background: #fff;
+    }
+  }
+  .upload-preview {
+    display: block;
+    margin-bottom: 10px;
+  }
+  .file {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+    img {
+      position: relative;
+      vertical-align: middle;
+      top: -1px;
+    }
+  }
+}

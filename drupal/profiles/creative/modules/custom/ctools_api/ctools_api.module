@@ -1,0 +1,161 @@
+<?php
+/**
+ * @file
+ * Chaos Tool Suite API.
+ *
+ * @author Sergey Bondarenko <broken@propeople.com.ua>
+ */
+
+autoload(__FILE__);
+
+/**
+ * Implements hook_menu().
+ */
+function ctools_api_menu() {
+  $routes = array();
+
+  foreach (array(
+    'get_fid_by_uri' => array(
+      'access arguments' => array('access content'),
+    ),
+  ) as $callback => $definition) {
+    $routes[CTOOLS_API_MODULE_NAME . '/' . $callback] = $definition + array(
+      'type' => MENU_CALLBACK,
+      'file' => sprintf('includes/%s.menu.inc', CTOOLS_API_MODULE_NAME),
+      'page callback' => _ctools_api_func($callback),
+    );
+  }
+
+  return $routes;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ctools_api_theme(array $existing, $type, $theme, $path) {
+  $suggestions = array();
+
+  $suggestions['ctools__content_types'] = array(
+    'render element' => 'elements',
+  );
+
+  return $suggestions;
+}
+
+/**
+ * Replace all "_" and ":" by "-".
+ *
+ * @param string $string
+ *   Input string.
+ *
+ * @return string
+ *   Output string with replaced symbols.
+ */
+function _ctools_api_dashes($string) {
+  return str_replace(array('_', ':'), '-', $string);
+}
+
+/**
+ * Prepend prefix module machine name into a string.
+ *
+ * @param string $suffix
+ *   String suffix.
+ *
+ * @return string
+ *   Prefixed string.
+ */
+function _ctools_api_prefix($suffix) {
+  return CTOOLS_API_MODULE_NAME . "_$suffix";
+}
+
+/**
+ * Create callback function name.
+ *
+ * @see _ctools_api_prefix()
+ */
+function _ctools_api_func($suffix) {
+  return '_' . _ctools_api_prefix($suffix);
+}
+
+/**
+ * Build name for style plugin hook and check it availability.
+ *
+ * @param string $plugin_type
+ *   The type of plugin.
+ * @param string $renderer_type
+ *   Renderer type (pane or region).
+ * @param string $plugin_name
+ *   Machine name of the plugin.
+ * @param string $hook
+ *   Pseudo hook name. Like "render_pane", "settings_form" etc.
+ *
+ * @return string
+ *   Hook name or empty string if function does not exist.
+ */
+function _ctools_api_callback($plugin_type, $renderer_type, $plugin_name, $hook) {
+  $func = _ctools_api_func("{$plugin_type}_{$plugin_name}_{$hook}_{$renderer_type}");
+
+  return function_exists($func) ? $func : '';
+}
+
+/**
+ * Generate theme suggestions for CTools content type.
+ *
+ * @param array $data
+ *   Updated array of CTools content type definition.
+ * @param string $plugin_type
+ *   Plugin type machine name.
+ * @param string $plugin_name
+ *   Plugin machine name.
+ */
+function _ctools_api_set_plugin_theme(array &$data, $plugin_type, $plugin_name) {
+  if (empty($data['theme hooks']) || !is_array($data['theme hooks'])) {
+    $data['theme hooks'] = array(
+      'default' => t('Default'),
+    );
+  }
+
+  // Create all theme suggestions.
+  foreach ($data['theme hooks'] as $hook => $title) {
+    $data['theme suggestions'][$hook] = _ctools_api_theme_suggestion($plugin_type, $plugin_name, $hook);
+  }
+}
+
+/**
+ * Build theme suggestion.
+ *
+ * @param string $plugin_type
+ *   Plugin type machine name.
+ * @param string $plugin_name
+ *   Plugin machine name.
+ * @param string $hook
+ *   Theme hook.
+ *
+ * @return string
+ *   Theme suggestion.
+ */
+function _ctools_api_theme_suggestion($plugin_type, $plugin_name, $hook) {
+  return implode('__', array('ctools', $plugin_type, $plugin_name, $hook));
+}
+
+/**
+ * Apply theme suggestion.
+ *
+ * @param string $plugin_type
+ *   Plugin type machine name.
+ * @param string $plugin_name
+ *   Plugin machine name.
+ * @param string $hook
+ *   Theme hook.
+ * @param array $variables
+ *   An array of variables that will be passed to template.
+ *
+ * @throws \Exception
+ *   When theme is not initialized.
+ *
+ * @return string
+ *   HTML content.
+ */
+function _ctools_api_apply_plugin_theme($plugin_type, $plugin_name, $hook, array $variables) {
+  return theme(_ctools_api_theme_suggestion($plugin_type, $plugin_name, $hook), array('content' => $variables));
+}

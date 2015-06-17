@@ -1,0 +1,12 @@
+name = Chaos Tool Suite API
+description = Improved API for content types provided by CTools
+package = Chaos tool suite
+
+version = 7.x
+core = 7.x
+php = 5.3
+
+project = ctools_api
+
+dependencies[] = autoload
+dependencies[] = panels
