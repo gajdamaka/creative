@@ -45,4 +45,5 @@ dependencies[] = l10n_update
 ; Features
 
 ; Custom modules
-
+dependencies[] = functions
+dependencies[] = ctools_plugins
