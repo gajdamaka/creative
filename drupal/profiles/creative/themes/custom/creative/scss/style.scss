@@ -1,0 +1,8 @@
+@import 'variables', 'mixins', 'normalize';
+
+
+body {
+  font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  background: url('../images/bg.jpg') no-repeat center center fixed;
+  @include vendor-prefixes(background-size, cover, webkit, moz, o);
+}
