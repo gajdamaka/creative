@@ -45,11 +45,11 @@ function mini_panels_header_default_panels_mini() {
     $pane->access = array();
     $pane->configuration = array(
       'theme' => 'minimized',
-      'street' => 'BEVERLY HILLS',
-      'build' => 'CA 90210',
-      'zip' => '3481',
-      'city' => 'MELROSE PLACE',
-      'phone' => '123.456.7890',
+      'street' => 'Pushkin',
+      'build' => '11 A',
+      'zip' => '49900',
+      'city' => 'Dnepropetrowsk',
+      'phone' => '+38 099 53 06',
       'email' => 'gaydamaka.vov@gmail.com',
       'override_title' => 0,
       'override_title_text' => '',
@@ -99,7 +99,7 @@ function mini_panels_header_default_panels_mini() {
     $pane->configuration = array(
       'admin_title' => 'Site title',
       'title' => '',
-      'body' => 'Business Casual',
+      'body' => 'Propeople (SLA)',
       'format' => 'plain_text',
       'substitute' => TRUE,
     );
