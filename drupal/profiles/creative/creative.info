@@ -43,6 +43,10 @@ dependencies[] = imce
 dependencies[] = l10n_update
 
 ; Features
+dependencies[] = mini_panels_footer
+dependencies[] = mini_panels_header
+dependencies[] = main_menu
+dependencies[] = panels_everywhere_main_layout
 
 ; Custom modules
 dependencies[] = functions
