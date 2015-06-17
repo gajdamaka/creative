@@ -19,7 +19,7 @@
 
   <div class="mobile-menu-wrapper clearfix">
     <?php if (!empty($content['menu'])): ?>
-      <nav role="navigation">
+      <nav role="navigation" class="container">
         <?php print $content['menu']; ?>
       </nav>
     <?php endif; ?>

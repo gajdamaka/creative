@@ -6,7 +6,7 @@
  * @var array $content
  */
 ?>
-<div class="wrapper row">
+<div class="wrapper container row">
   <div class="cell">
     <?php foreach ($content as $region => $data): ?>
       <?php if (!empty($data)): ?>

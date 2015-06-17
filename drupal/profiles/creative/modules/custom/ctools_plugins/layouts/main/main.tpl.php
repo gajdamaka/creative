@@ -14,7 +14,9 @@
 
 <?php if (!empty($content['main'])): ?>
   <main role="main" class="clearfix">
-    <?php print $content['main']; ?>
+    <div class="container">
+      <?php print $content['main']; ?>
+    </div>
   </main>
 <?php endif; ?>
 
