@@ -11,4 +11,23 @@ header {
     line-height: normal;
     color: #fff;
   }
+  .contact--minimized {
+    address {
+      display: block;
+      margin: 0;
+      padding: 0 0 40px;
+      text-align: center;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+      text-transform: uppercase;
+      font-size: 1.25em;
+      font-weight: 400;
+      letter-spacing: 3px;
+      color: #fff;
+    }
+  }
+  nav {
+    margin: 0 auto;
+    padding: 0 15px;
+    background: rgba(255, 255, 255, .9);
+  }
 }
