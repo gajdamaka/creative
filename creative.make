@@ -2,7 +2,6 @@ api = 2
 core = 7.x
 
 defaults[projects][subdir] = contrib
-;defaults[projects][l10n_url] = http://ftp.drupal.org/files/translations/l10n_server.xml
 
 projects[] = drupal
 projects[] = ctools
@@ -32,6 +31,3 @@ projects[] = l10n_update
 
 ; Themes
 projects[] = shiny
-
-; Translations
-; translations[] = sv
