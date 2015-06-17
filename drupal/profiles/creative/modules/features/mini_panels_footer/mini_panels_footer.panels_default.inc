@@ -42,8 +42,8 @@ function mini_panels_footer_default_panels_mini() {
     $pane->shown = TRUE;
     $pane->access = array();
     $pane->configuration = array(
-      'admin_title' => '',
-      'title' => 'Copyright',
+      'admin_title' => 'Copyright',
+      'title' => '',
       'body' => 'Copyright © Gaydamaka Website 2015',
       'format' => 'plain_text',
       'substitute' => TRUE,
@@ -52,7 +52,10 @@ function mini_panels_footer_default_panels_mini() {
     $pane->style = array(
       'settings' => NULL,
     );
-    $pane->css = array();
+    $pane->css = array(
+      'css_id' => '',
+      'css_class' => 'text-center',
+    );
     $pane->extras = array();
     $pane->position = 0;
     $pane->locks = array();
