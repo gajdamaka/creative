@@ -50,14 +50,14 @@ function creative_preprocess(array &$variables, $hook) {
     // Load assets, if they are exist, from:
     // <THEME_PATH>/css/includes/<LAYOUT_NAME>.css
     // <THEME_PATH>/js/includes/<LAYOUT_NAME>.js
-    _parallel_include_layout_additional_assets($layout_name);
+    _creative_include_layout_additional_assets($layout_name);
 
     // If authorized user has an administration permissions, then, for
     // it, can be loaded additional assets:
     // <THEME_PATH>/css/includes/<LAYOUT_NAME>-admin.css
     // <THEME_PATH>/js/includes/<LAYOUT_NAME>-admin.js
     if ($variables['is_admin']) {
-      _parallel_include_layout_additional_assets("$layout_name-admin");
+      _creative_include_layout_additional_assets("$layout_name-admin");
     }
 
     // The values of "libraries" array must consist of arrays with
