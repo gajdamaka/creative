@@ -47,4 +47,53 @@ header {
       }
     }
   }
+  @include breakpoint((to: tablet)){
+    .wrapper {
+      background: #f8f8f8;
+    }
+    .site-title {
+      display: inline-block;
+      height: 50px;
+      text-align: left;
+      padding: 20px 15px 35px;
+      @include font(18px, 20px, 900);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #777
+    }
+    .contact--minimized {
+      display: none;
+    }
+    .mobile-menu {
+      display: inline-block;
+      width: 50px;
+      height: 35px;
+      float: right;
+      margin: 10px 15px;
+      background: url(../images/mobile-menu.png) no-repeat 7px;
+      background-size: 35px 30px;
+      border: 1px #ddd solid;
+      border-radius: 4px;
+      opacity: .4;
+    }
+    .mobile-menu-wrapper {
+      background: none;
+      border-top: 1px #e7e7e7 solid;
+      &.open {
+        display: block;
+      }
+      ul {
+        display: block;
+        margin: 7.5px -15px;
+      }
+      li {
+        display: block;
+        float: none;
+        a {
+          padding: 10px 15px;
+          @include font(14px, 20px);
+        }
+      }
+    }
+  }
 }

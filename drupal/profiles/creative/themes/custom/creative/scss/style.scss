@@ -53,3 +53,7 @@ body {
 .text-center {
   text-align: center;
 }
+#overlay {
+  @include full-width(fixed);
+  background: rgba(0, 0, 0, .6);
+}

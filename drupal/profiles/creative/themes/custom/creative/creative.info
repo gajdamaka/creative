@@ -5,9 +5,11 @@ core = 7.x
 
 ; CSS
 stylesheets[all][] = css/style.css
+stylesheets[all][] = css/includes/bootstrap.css
 stylesheets[print][] = css/print.css
 
 ; JavaScript
+scripts[] = js/bootstrap.js
 scripts[] = js/jquery.theme.js
 scripts[] = js/script.js
 
