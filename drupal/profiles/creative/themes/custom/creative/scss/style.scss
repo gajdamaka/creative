@@ -6,3 +6,15 @@ body {
   background: url('../images/bg.jpg') no-repeat center center fixed;
   @include vendor-prefixes(background-size, cover, webkit, moz, o);
 }
+
+.clearfix {
+  &:before,
+  &:after {
+    content: '';
+    display: table;
+  }
+
+  &:after {
+    clear: both;
+  }
+}
