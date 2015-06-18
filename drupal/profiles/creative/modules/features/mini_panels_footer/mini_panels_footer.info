@@ -1,4 +1,4 @@
-name = footer
+name = Footer
 core = 7.x
 package = Mini panels
 version = 7.x-1.0
