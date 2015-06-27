@@ -1,0 +1,118 @@
+<?php
+/**
+ * @file
+ * Cross favicon_api module.
+ *
+ * @author Gaydamaka Vladimir <vladimir.gaydamaka@ffw.com>
+ */
+
+define('THEME_PATH', drupal_get_path('theme', variable_get('theme_default', '')));
+define('FAVICON_DIR', DRUPAL_ROOT . '/' . THEME_PATH . '/favicon/');
+
+/**
+ * Implements hook_form_system_theme_settings_alter().
+ */
+function favicon_api_form_system_theme_settings_alter(&$form, &$form_state) {
+  $dimensions = _favicon_api_get_default_file_list();
+
+  $form['favicon_api']['favicon_api_advanced_settings'] = array(
+    '#type' => 'vertical_tabs',
+    '#title' => t('favicon_api settings'),
+    '#default_tab' => 'windows',
+  );
+
+  foreach (array(
+    'windows' => array(
+      'title' => t('Windows OS settings'),
+    ),
+    'ios' => array(
+      'title' => t('iOS settings'),
+    ),
+  ) as $os => $param) {
+    $form[$os] = array(
+      '#type' => 'fieldset',
+      '#title' => $param['title'],
+      '#collapsible' => TRUE,
+      '#group' => 'favicon_api_advanced_settings',
+    );
+    foreach ($dimensions[$os] as $title => $dimension) {
+      $description = t('In the folder "theme/favicon" should be located file !title.ico', array('!title' => $title));
+      $error = _favicon_api_dimension_validate($title . '.ico', $dimension);
+
+      if (!empty($error)) {
+        $description = '<span class="error">' . $error[0] . '</span>';
+      }
+
+      $form[$os]['favicon_api_' . $os . '_' . $dimension] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Check favicon_api by devices'),
+        '#description' => $description,
+        '#default_value' => empty($error) && _favicon_api_file_exist($title . '.ico') ? TRUE : FALSE,
+        '#disabled' => TRUE,
+      );
+    }
+  }
+
+  return $form;
+}
+
+function _favicon_api_dimension_validate($filename, $min_dimensions = 0) {
+  $error = array();
+  $file = NULL;
+
+  if (_favicon_api_file_exist($filename)) {
+    $file = file_get_contents(FAVICON_DIR . $filename);
+    $file = file_save_data($file, 'temporary://' . $filename, FILE_EXISTS_RENAME);
+    $error = file_validate_image_resolution($file, 0, $min_dimensions);
+    file_delete($file, TRUE);
+  }
+  return $error;
+}
+
+function _favicon_api_file_exist($filename) {
+  return file_exists(FAVICON_DIR . $filename) ? TRUE : FALSE;
+}
+
+function _favicon_api_get_default_file_list() {
+  $device_dimensions =array();
+
+  foreach (array(
+    '310x310',
+    '310x150',
+    '150x150',
+    '70x70'
+  ) as $dimension) {
+    $device_dimensions['windows']['mstile_' . $dimension] = $dimension;
+  }
+
+  foreach (array('ipad_', 'iphone_') as $key => $device) {
+    foreach (array(
+      'ios7_retina_' => array(
+        '152x152',
+        '120x120'
+      ),
+      'retina_' => array(
+        '144x144',
+        '114x114'
+      ),
+      'ios7_non_retina_' => array(
+        '76x76',
+        '60x60',
+      ),
+      'non_retina_' => array(
+        '72x72',
+        '57x57',
+      ),
+    ) as $screen => $dimensions)
+    $device_dimensions['ios'][$device . $screen . $dimensions[$key]] = $dimensions[$key];
+  }
+
+  return $device_dimensions;
+}
+
+/**
+ * Implements hook_html_head_alter().
+ */
+function favicon_api_html_head_alter(&$head_elements) {
+
+}

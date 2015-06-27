@@ -1,0 +1,7 @@
+name = Favicon
+description = Improved API for render favicon.
+package = Propeople
+
+version = 7.x
+core = 7.x
+php = 5.3
