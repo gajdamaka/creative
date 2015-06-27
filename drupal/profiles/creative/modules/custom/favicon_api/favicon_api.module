@@ -3,7 +3,7 @@
  * @file
  * Cross favicon_api module.
  *
- * @author Gaydamaka Vladimir <vladimir.gaydamaka@ffw.com>
+ * @author Gaydamaka Vladimir <vladimir.gaydamaka@ffwagency.com>
  */
 
 define('THEME_PATH', drupal_get_path('theme', variable_get('theme_default', '')));
@@ -45,7 +45,7 @@ function favicon_api_form_system_theme_settings_alter(&$form, &$form_state) {
 
       $form[$os]['favicon_api_' . $os . '_' . $dimension] = array(
         '#type' => 'checkbox',
-        '#title' => t('Check favicon_api by devices'),
+        '#title' => t('Exist favicon file'),
         '#description' => $description,
         '#default_value' => empty($error) && _favicon_api_file_exist($title . '.ico') ? TRUE : FALSE,
         '#disabled' => TRUE,
