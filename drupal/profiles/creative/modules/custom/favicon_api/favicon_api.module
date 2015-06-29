@@ -6,6 +6,7 @@
  * @author Gaydamaka Vladimir <vladimir.gaydamaka@ffwagency.com>
  */
 
+define('FAVICON_API_DIR', drupal_get_path('module', basename(__DIR__)));
 define('THEME_PATH', drupal_get_path('theme', variable_get('theme_default', '')));
 define('FAVICON_DIR', THEME_PATH . '/favicon/');
 define('FILE_EXTENSION', '.ico');
@@ -36,23 +37,51 @@ function favicon_api_form_system_theme_settings_alter(&$form, &$form_state) {
       '#collapsible' => TRUE,
       '#group' => 'favicon_api_advanced_settings',
     );
+
     foreach ($device_dimensions[$os] as $title => $dimension) {
-      $description = t('In the folder "theme/favicon" should be located file !title.ico', array('!title' => $title));
+      $description = t('In the folder "DEFAULT_THEME/favicon" should be located file !title.ico', array('!title' => $title));
       $error = _favicon_api_dimension_validate($title, $dimension);
 
 
       $form[$os]['favicon_api_' . $os . '_' . $dimension] = array(
         '#type' => 'checkbox',
-        '#title' => t('Exist favicon file'),
+        '#title' => t('Exist favicon file with dimension !dimension', array('!dimension' => $dimension)),
         '#description' => $description,
         '#default_value' => empty($error) && _favicon_api_file_exist($title) ? TRUE : FALSE,
         '#disabled' => TRUE,
       );
 
       if (!empty($error)) {
-       // form_set_error('favicon_api_' . $os . '_' . $dimension, $error[0]);//$error[0];
+        form_set_error('favicon_api_' . $os . '_' . $dimension, $error[0]);
       }
     }
+
+    $form[$os]['favicon_api_' . $os . '_full_dimension'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Select one file for all dimensions'),
+      '#description' => t('Use one file for all dimension'),
+      '#default_value' => FALSE,
+    );
+
+    $form[$os]['settings'] = array(
+      '#type' => 'container',
+      '#states' => array(
+        // Hide the favicon settings when using the default favicon.
+        'invisible' => array(
+          'input[name="favicon_api_' . $os . '_full_dimension"]' => array('checked' => FALSE),
+        ),
+      ),
+    );
+
+    $form[$os]['settings']['favicon_api_' . $os . '_default_file'] = array(
+      '#type' => 'managed_file',
+      '#title' => t('Upload icon image'),
+      '#upload_validators' => array(
+        'file_validate_extensions' => array("ico"),
+      ),
+      '#upload_location' => 'public://',
+      '#description' => t('Upload an image'),
+    );
   }
 
   return $form;
@@ -125,6 +154,14 @@ function favicon_api_html_head_alter(&$head_elements) {
   foreach ($device_dimensions as $os => $dimensions) {
     switch ($os) {
       case 'windows':
+        $head_elements['msapplication_config'] = array(
+          '#tag' => 'meta',
+          '#attributes' => array(
+            'name' => 'msapplication-config',
+            'href' => '/' . FAVICON_API_DIR . '/browserconfig.xml'
+          ),
+          '#type' => 'html_tag',
+        );
         break;
 
       case 'ios':
