@@ -87,7 +87,18 @@ function favicon_api_form_system_theme_settings_alter(&$form, &$form_state) {
   return $form;
 }
 
-function _favicon_api_dimension_validate($filename, $min_dimensions = 0) {
+/**
+ * Validate image dimension.
+ *
+ * @param string $filename
+ *   The name of file.
+ * @param string $min_dimensions
+ *   The dimension image.
+ *
+ * @return array
+ *   Return error messages.
+ */
+function _favicon_api_dimension_validate($filename, $min_dimensions) {
   $error = array();
   $file = NULL;
 
@@ -100,16 +111,40 @@ function _favicon_api_dimension_validate($filename, $min_dimensions = 0) {
   return $error;
 }
 
+/**
+ * Check exist file.
+ *
+ * @param string $filename
+ *   The name of file.
+ *
+ * @return bool
+ *  Check file.
+ */
 function _favicon_api_file_exist($filename) {
   return file_exists(FAVICON_DIR . $filename  . FILE_EXTENSION) ? TRUE : FALSE;
 }
 
+/**
+ * Get path to file.
+ *
+ * @param string $filename
+ *   The name of file.
+ *
+ * @return string
+ *  The path to file.
+ */
 function _favicon_api_get_file_path($filename) {
   return '/' . FAVICON_DIR . $filename . FILE_EXTENSION;
 }
 
+/**
+ * Get path to files and name device dimensions.
+ *
+ * @return array
+ *   The path to files.
+ */
 function _favicon_api_get_default_file_list() {
-  $device_dimensions =array();
+  $device_dimensions = array();
 
   foreach (array(
     '310x310',
