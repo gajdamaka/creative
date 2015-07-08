@@ -49,6 +49,7 @@ header {
   }
   @include breakpoint((to: tablet)){
     .wrapper {
+      position: relative;
       background: #f8f8f8;
     }
     .site-title {
@@ -65,7 +66,10 @@ header {
       display: none;
     }
     .mobile-menu {
-      display: inline-block;
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
       width: 50px;
       height: 35px;
       float: right;
@@ -77,11 +81,9 @@ header {
       opacity: .4;
     }
     .mobile-menu-wrapper {
+      display: none;
       background: none;
       border-top: 1px #e7e7e7 solid;
-      &.open {
-        display: block;
-      }
       ul {
         display: block;
         margin: 7.5px -15px;
