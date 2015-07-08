@@ -27,7 +27,7 @@ function favicon_api_form_system_theme_settings_alter(&$form, &$form_state) {
     'windows' => array(
       'title' => t('Windows OS settings'),
     ),
-    'ios' => array(
+    'apple' => array(
       'title' => t('iOS settings'),
     ),
   ) as $os => $param) {
@@ -38,24 +38,6 @@ function favicon_api_form_system_theme_settings_alter(&$form, &$form_state) {
       '#group' => 'favicon_api_advanced_settings',
     );
 
-    foreach ($device_dimensions[$os] as $title => $dimension) {
-      $description = t('In the folder "DEFAULT_THEME/favicon" should be located file !title.ico', array('!title' => $title));
-      $error = _favicon_api_dimension_validate($title, $dimension);
-
-
-      $form[$os]['favicon_api_' . $os . '_' . $dimension] = array(
-        '#type' => 'checkbox',
-        '#title' => t('Exist favicon file with dimension !dimension', array('!dimension' => $dimension)),
-        '#description' => $description,
-        '#default_value' => empty($error) && _favicon_api_file_exist($title) ? TRUE : FALSE,
-        '#disabled' => TRUE,
-      );
-
-      if (!empty($error)) {
-        form_set_error('favicon_api_' . $os . '_' . $dimension, $error[0]);
-      }
-    }
-
     $form[$os]['favicon_api_' . $os . '_full_dimension'] = array(
       '#type' => 'checkbox',
       '#title' => t('Select one file for all dimensions'),
@@ -63,17 +45,31 @@ function favicon_api_form_system_theme_settings_alter(&$form, &$form_state) {
       '#default_value' => FALSE,
     );
 
-    $form[$os]['settings'] = array(
-      '#type' => 'container',
-      '#states' => array(
-        // Hide the favicon settings when using the default favicon.
-        'invisible' => array(
-          'input[name="favicon_api_' . $os . '_full_dimension"]' => array('checked' => FALSE),
-        ),
-      ),
-    );
+    foreach ($device_dimensions[$os] as $title => $dimension) {
+      $description = t('In the folder "DEFAULT_THEME/favicon" should be located file !title.ico', array('!title' => $title));
+      $errors = _favicon_api_dimension_validate($title, $dimension);
 
-    $form[$os]['settings']['favicon_api_' . $os . '_default_file'] = array(
+      if (!empty($errors)) {
+        foreach ($errors as $error) {
+          $description .= '<p class="error" style="font-weight: bold;">' . $error . '</p>';
+        }
+      }
+
+      $form[$os]['favicon_api_' . $os . '_' . $dimension] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Exist favicon file with dimension !dimension', array('!dimension' => $dimension)),
+        '#description' => $description,
+        '#default_value' => empty($errors) && _favicon_api_file_exist($title, FILE_EXTENSION) ? TRUE : FALSE,
+        '#disabled' => TRUE,
+        '#states' => array(
+          'invisible' => array(
+            'input[name="favicon_api_' . $os . '_full_dimension"]' => array('checked' => TRUE),
+          ),
+        ),
+      );
+    }
+
+    $form[$os]['favicon_api_' . $os . '_default_file'] = array(
       '#type' => 'managed_file',
       '#title' => t('Upload icon image'),
       '#upload_validators' => array(
@@ -81,6 +77,11 @@ function favicon_api_form_system_theme_settings_alter(&$form, &$form_state) {
       ),
       '#upload_location' => 'public://',
       '#description' => t('Upload an image'),
+      '#states' => array(
+        'invisible' => array(
+          'input[name="favicon_api_' . $os . '_full_dimension"]' => array('checked' => FALSE),
+        ),
+      ),
     );
   }
 
@@ -102,7 +103,7 @@ function _favicon_api_dimension_validate($filename, $min_dimensions) {
   $error = array();
   $file = NULL;
 
-  if (_favicon_api_file_exist($filename)) {
+  if (_favicon_api_file_exist($filename, FILE_EXTENSION)) {
     $file = file_get_contents(FAVICON_DIR . $filename . FILE_EXTENSION);
     $file = file_save_data($file, 'temporary://' . $filename . FILE_EXTENSION, FILE_EXISTS_RENAME);
     $error = file_validate_image_resolution($file, 0, $min_dimensions);
@@ -116,12 +117,14 @@ function _favicon_api_dimension_validate($filename, $min_dimensions) {
  *
  * @param string $filename
  *   The name of file.
+ * @param string $extension
+ *   The extension of file.
  *
  * @return bool
  *  Check file.
  */
-function _favicon_api_file_exist($filename) {
-  return file_exists(FAVICON_DIR . $filename  . FILE_EXTENSION) ? TRUE : FALSE;
+function _favicon_api_file_exist($filename, $extension) {
+  return file_exists(FAVICON_DIR . $filename  . $extension) ? TRUE : FALSE;
 }
 
 /**
@@ -174,7 +177,7 @@ function _favicon_api_get_default_file_list() {
         '57x57',
       ),
     ) as $screen => $dimensions)
-    $device_dimensions['ios'][$device . $screen . $dimensions[$key]] = $dimensions[$key];
+    $device_dimensions['apple'][$device . $screen . $dimensions[$key]] = $dimensions[$key];
   }
 
   return $device_dimensions;
@@ -185,23 +188,52 @@ function _favicon_api_get_default_file_list() {
  */
 function favicon_api_html_head_alter(&$head_elements) {
   $device_dimensions = _favicon_api_get_default_file_list();
+  $child  = NULL;
+  $save_xml = NULL;
 
   foreach ($device_dimensions as $os => $dimensions) {
     switch ($os) {
       case 'windows':
+        if (NULL == cache_get(__FUNCTION__)) {
+          $browserconfig = simplexml_load_file(FAVICON_API_DIR . '/browserconfig.xml');
+          $tile = $browserconfig->msapplication->tile;
+
+          foreach ($dimensions as $filename => $dimension) {
+            if (_favicon_api_file_exist($filename, FILE_EXTENSION)) {
+              switch ($dimension) {
+                case '310x150':
+                  $child = $tile->addChild('wide' . $dimension . 'logo');
+                  $child->addAttribute('src', _favicon_api_get_file_path($filename));
+                  break;
+
+                default:
+                  $child = $tile->addChild('square' . $dimension . 'logo');
+                  $child->addAttribute('src', _favicon_api_get_file_path($filename));
+                  break;
+              }
+            }
+          }
+
+          $save_xml = $browserconfig->saveXML(base_path() . 'browserconfig.xml');
+
+          if (!empty($save_xml)) {
+            cache_set(__FUNCTION__, $dimensions);
+          }
+        }
+
         $head_elements['msapplication_config'] = array(
           '#tag' => 'meta',
           '#attributes' => array(
             'name' => 'msapplication-config',
-            'href' => '/' . FAVICON_API_DIR . '/browserconfig.xml'
+            'href' => base_path() . 'browserconfig.xml',
           ),
           '#type' => 'html_tag',
         );
         break;
 
-      case 'ios':
+      case 'apple':
         foreach ($dimensions as $filename => $dimension) {
-          if (_favicon_api_file_exist($filename)) {
+          if (_favicon_api_file_exist($filename, FILE_EXTENSION)) {
             $head_elements[$filename] = array(
               '#tag' => 'link',
               '#attributes' => array(
