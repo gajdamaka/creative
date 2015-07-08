@@ -188,6 +188,7 @@ function _favicon_api_get_default_file_list() {
  */
 function favicon_api_html_head_alter(&$head_elements) {
   $device_dimensions = _favicon_api_get_default_file_list();
+  $browser_config = NULL;
   $child  = NULL;
   $save_xml = NULL;
 
@@ -195,8 +196,8 @@ function favicon_api_html_head_alter(&$head_elements) {
     switch ($os) {
       case 'windows':
         if (NULL == cache_get(__FUNCTION__)) {
-          $browserconfig = simplexml_load_file(FAVICON_API_DIR . '/browserconfig.xml');
-          $tile = $browserconfig->msapplication->tile;
+          $browser_config = simplexml_load_file(FAVICON_API_DIR . '/browserconfig.xml');
+          $tile = $browser_config->msapplication->tile;
 
           foreach ($dimensions as $filename => $dimension) {
             if (_favicon_api_file_exist($filename, FILE_EXTENSION)) {
@@ -214,7 +215,7 @@ function favicon_api_html_head_alter(&$head_elements) {
             }
           }
 
-          $save_xml = $browserconfig->saveXML(base_path() . 'browserconfig.xml');
+          $save_xml = $browser_config->saveXML(base_path() . 'browserconfig.xml');
 
           if (!empty($save_xml)) {
             cache_set(__FUNCTION__, $dimensions);
